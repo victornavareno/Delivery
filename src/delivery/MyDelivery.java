@@ -19,7 +19,7 @@ public class MyDelivery {
 		// Obtenemos una lista de pedidos
 		List<Pedido> lp;
 		lp = new LinkedList<>();
-		lp = Pedido.pedidosDesdeFichero("pedidos7.bin"); // Pon aqui la ruta y nombre de tu fichero
+		lp = Pedido.pedidosDesdeFichero(Config.nombreFichero); // Pon aqui la ruta y nombre de tu fichero
 
 		// LANZAR PEDIDOS
 		long initialTime = new Date().getTime();
@@ -49,6 +49,21 @@ public class MyDelivery {
 				e.printStackTrace();
 			}
 			executor.shutdown(); // cierro el executor
+		}
+
+		// Callable para sacar el pedido mas caro
+		PrecioMasAlto precioMasAlto = new PrecioMasAlto(lp); // callable para encontrar el pedido mas caro
+		ThreadPoolExecutor executor2;
+		executor2 = (ThreadPoolExecutor) Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
+		Future<Double> future = executor2.submit(precioMasAlto);
+
+		try {
+			Double pedidoMasCaro = future.get();
+			System.out.println("EL PEDIDO MAS CARO VALE: " + pedidoMasCaro);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		} catch (ExecutionException e) {
+			e.printStackTrace();
 		}
 
 		// AUDITORIAS
