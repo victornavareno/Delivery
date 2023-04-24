@@ -128,7 +128,6 @@ public class MyDelivery {
 		} else
 			Traza.traza(ColoresConsola.RED_BOLD_BRIGHT, 3, "Pedido no encontrado");
 		System.out.println();
-
 	}
 
 	public static void main(String[] args) {
