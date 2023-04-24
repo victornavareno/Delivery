@@ -31,7 +31,7 @@ public class ForkJoinTask extends RecursiveAction{
 				this.superaPrecio = true;
 			}
 			totalPrecios =+ sumarPrecios();
-			Traza.traza(ColoresConsola.RED_BOLD, 5 , "Tarea Forkjoin: sumando precios. Precio actual= " + totalPrecios);
+			Traza.traza(ColoresConsola.RED_BOLD, 6 , "Tarea Forkjoin: sumando precios. Precio actual= " + totalPrecios);
 			//DUDA FERNANDO: COMO INDICAR QUE EL PEDIDO ACTUAL HA SUPERADO EL PRECIO COTA 12 EUROS
 
 		}
@@ -54,7 +54,7 @@ public class ForkJoinTask extends RecursiveAction{
 	}
 	
 	public double getPrecio() {
-		Traza.traza(ColoresConsola.RED_BOLD, 5 , "el precio actual es: " + totalPrecios);
+		Traza.traza(ColoresConsola.RED_BOLD, 6 , "el precio actual es: " + totalPrecios);
 		return this.totalPrecios;
 	}
 

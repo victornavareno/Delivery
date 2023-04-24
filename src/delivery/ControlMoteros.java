@@ -1,6 +1,7 @@
 package delivery;
 
 import java.util.*;
+import java.util.concurrent.CyclicBarrier;
 
 import pcd.util.Traza;
 import pcd.util.Ventana;
@@ -16,9 +17,13 @@ public class ControlMoteros {
 	private Object o1; // waitset moteros
 	private Object o2; // waitset pedidos
 
+	// cyclic barrier:
+	private CyclicBarrier cyclicBarrier;
+
 	public ControlMoteros(Restaurante _r, int _numeroMoteros) {
 		r = _r;
 		numeroMoteros = _numeroMoteros;
+		cyclicBarrier = new CyclicBarrier(numeroMoteros, motero);
 
 		// Creamos una ventana para los mensajes de este objeto.
 		v = new Ventana("Moteros de Rest." + r.getNombre(), posicionVentana, 10);
@@ -30,7 +35,7 @@ public class ControlMoteros {
 
 		// Lanzando los moteros del restaurante
 		for (int i = 0; i < Config.numeroMoteros; i++) {
-			motero = new Motero(i, this);
+			motero = new Motero(i, this, cyclicBarrier);
 			motero.start();
 		}
 	}
