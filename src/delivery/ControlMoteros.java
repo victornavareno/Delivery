@@ -52,7 +52,7 @@ public class ControlMoteros {
 		synchronized (o1) {
 			while (numeroMoteros == 0) {
 				try {
-					Traza.traza(5, "NO HAY MOTEROS DISPONIBLES");
+					Traza.traza(6, "NO HAY MOTEROS DISPONIBLES");
 					o1.wait();
 				} catch (InterruptedException e) {
 					e.printStackTrace();

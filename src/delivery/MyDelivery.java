@@ -51,19 +51,37 @@ public class MyDelivery {
 			executor.shutdown(); // cierro el executor
 		}
 
-		// Callable para sacar el pedido mas caro
+		// Callable para sacar el pedido mas caro, utilizo executors
 		PrecioMasAlto precioMasAlto = new PrecioMasAlto(lp); // callable para encontrar el pedido mas caro
 		ThreadPoolExecutor executor2;
 		executor2 = (ThreadPoolExecutor) Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
 		Future<Double> future = executor2.submit(precioMasAlto);
-
 		try {
-			Double pedidoMasCaro = future.get();
-			System.out.println("EL PEDIDO MAS CARO VALE: " + pedidoMasCaro);
+			Double precioMasCaro = future.get();
+			Traza.traza(ColoresConsola.PURPLE_BOLD_BRIGHT, 4, "EL PEDIDO MAS CARO VALE: " + precioMasCaro);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		} catch (ExecutionException e) {
 			e.printStackTrace();
+		}
+		executor2.shutdown();
+
+		// Forkjoin para obtener lista con los pedidos por encima de 12€
+		List<Pedido> pedidosSuperan12Euros = new LinkedList<Pedido>(); // Aqui almacenaremos los pedidos caros
+		for (Pedido pedido : lp) {
+			System.out.println("ANALIZANDO PEDIDO");
+			ForkJoinTask task = new ForkJoinTask(pedido.getProductos(), 0, Config.numeroProductos);
+			ForkJoinPool forkjoin = new ForkJoinPool();
+			forkjoin.execute(task);
+			if (task.superaPrecio()) {
+				pedidosSuperan12Euros.add(pedido);
+			}
+			forkjoin.shutdown();
+		}
+
+		Traza.traza(ColoresConsola.RED_UNDERLINED, 6, "PEDIDOS QUE SUPERAN 12 EUROS: ");
+		for (Pedido pedido : pedidosSuperan12Euros) {
+			Traza.traza(ColoresConsola.RED_UNDERLINED, 6, pedido.getId() + " " + pedido.getPrecioPedido());
 		}
 
 		// AUDITORIAS
