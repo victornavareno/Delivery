@@ -10,7 +10,7 @@ public class Config {
 	public final static int maximoPrecioProducto = 5;	// precio maximo de cada producto.
 	
 	// Anadidos por mi:
-	public final static int lanzarPedidos = 1;			// 0: Lanzo los threads normalmente
+	public final static int lanzarPedidos = 2;			// 0: Lanzo los threads normalmente
 														// 1: Lanzo los threads con executor
 														// 2: Lanzo los threads con streams
 }

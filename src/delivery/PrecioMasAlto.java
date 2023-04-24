@@ -3,7 +3,7 @@ package delivery;
 import java.util.*;
 import java.util.concurrent.Callable;
 
-public class PrecioMasAlto implements Callable {
+public class PrecioMasAlto implements Callable<Double> {
     private List<Pedido> listaPedidos;
 
     public PrecioMasAlto(List<Pedido> listaPedidos){
