@@ -74,7 +74,6 @@ public class MyDelivery {
 		executor2.shutdown();
 
 		// Streams para mostrar el importe del pedido mas caro:
-		System.out.println();
 		OptionalDouble precioMasCaroOptional = lp.stream()
 				.parallel()
 				.mapToDouble(Pedido::getPrecioPedido) // debemos convertirlo a un mapa de Doubles para encontrar el mas alto despues
