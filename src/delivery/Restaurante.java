@@ -56,11 +56,10 @@ public class Restaurante {
 			output.writeObject(datosPago);
 			output.flush();
 			// recibimos respuesta
-			if (input.readLine().equals("OK")) {
+			String response = input.readLine();
+			if (response.equals("OK")) {
 				cocinarPedido(_p);
-			}
-
-			else if (input.readLine().equals("KO")) {
+			} else if (response.equals("KO")) {
 				// mando un objeto DatosPagoPedido con el pedido
 				// En PedidosNoPagados leemos del socket
 			}
@@ -72,4 +71,5 @@ public class Restaurante {
 			e.printStackTrace();
 		}
 	}
+	
 }

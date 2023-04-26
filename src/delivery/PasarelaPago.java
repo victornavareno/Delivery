@@ -25,40 +25,37 @@ public class PasarelaPago {
     public static void main(String[] args) {
         Traza.traza(5, "ESPERANDO A RECIBIR PEDIDO");
         Ventana v = new Ventana("Pedidos recibidos: ", 50, 10);
-        try {
-            ServerSocket serverSocket = new ServerSocket(10000); // me creo un server socket por el puerto 10000
-
-            while (true) { // esperamos a que llegue una petición de forma indefinida
+        try (ServerSocket serverSocket = new ServerSocket(10000)) { // try-with-resources block to ensure proper closing
+            while (true) {
                 Socket socket = serverSocket.accept();
-                ObjectInputStream input = new ObjectInputStream(socket.getInputStream());
-                BufferedWriter output = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
-                DatosPagoPedido pedido = (DatosPagoPedido) input.readObject();
+                try (ObjectInputStream input = new ObjectInputStream(socket.getInputStream());
+                        BufferedWriter output = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()))) {
+                    DatosPagoPedido pedido = (DatosPagoPedido) input.readObject();
 
-                if (pedido.getImporte() < 12) {
-                    Traza.traza(ColoresConsola.BLUE_BACKGROUND, 5, "PEDIDO RECHAZADO");
-                    output.write("KO\n"); // este pedido será rechazado
-                    output.flush();
+                    if (pedido.getImporte() < 12) {
+                        Traza.traza(ColoresConsola.BLUE_BACKGROUND, 5, "PEDIDO RECHAZADO");
+                        output.write("KO\n");
+                        output.flush();
+                    } else {
+                        Traza.traza(ColoresConsola.BLUE_BACKGROUND, 5, "PEDIDO ACEPTADO");
+                        v.addText(pedido.getId());
+                        output.write("OK\n");
+                        output.flush();
+                    }
+                } catch (IOException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                } catch (ClassNotFoundException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                } finally {
+                    socket.close();
                 }
-
-                else {
-                    Traza.traza(ColoresConsola.BLUE_BACKGROUND, 5, "PEDIDO ACEPTADO");
-                    v.addText(pedido.getId());
-                    output.write("OK\n"); // este pedido será aceptado, enviamos OK
-                    output.flush();
-                }
-
-                // CERRAMOS AMBOS SOCKETS
-                socket.close();
-                serverSocket.close();
             }
-
         } catch (IOException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
-        } catch (ClassNotFoundException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
         }
-
     }
+
 }
