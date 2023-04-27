@@ -2,6 +2,9 @@ package delivery;
 import java.util.List;
 import java.util.Random;
 
+import io.reactivex.rxjava3.core.Observable;
+import io.reactivex.rxjava3.core.Observer;
+
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -18,9 +21,9 @@ public class Pedido implements Serializable {
 	private static final long serialVersionUID = 1L; 
 	
 	String idPedido;
-	String direccion;			// Dirección del cliente
+	String direccion;			// Direcciï¿½n del cliente
 	int restaurante;			// Restaurante al que va el pedido
-	Canal canal;				// Canal por el que viene el pedido (web, móvil, etc)
+	Canal canal;				// Canal por el que viene el pedido (web, mï¿½vil, etc)
 	LocalDate fecha;			// Fecha del pedido
 	LocalTime hora;				// Hora del pedido
 	List<Producto> productos;	// Productos que conforman este pedido
@@ -84,7 +87,7 @@ public class Pedido implements Serializable {
 	}
 	
 	// GENERAR PEDIDOS
-	// Genera un número determinado de pedidos (numPedidos) por el canal especificado (_canal)
+	// Genera un nï¿½mero determinado de pedidos (numPedidos) por el canal especificado (_canal)
 	public static List<Pedido> generaPedidos (int _numPedidos, Canal _canal) {
 		List<Pedido> listaPedidos = new ArrayList<>(_numPedidos);
 		String id;
@@ -111,9 +114,9 @@ public class Pedido implements Serializable {
 
 	
 	public static String generarDireccion () {
-		// Genera una dirección postal aleatoria eligiendo una calle y número de entre un conjunto de calles y números
-		List <String> listaDirecciones = Arrays.asList("Santa Joaquina de Vedruna", "Alfonso IX", "Ruta de la Plata", "Doctor Marañón", "Rodíguez Moñino", 
-				"Hornillos", "Berna", "París", "Pizarro", "Dalia", "Maluquer", "León Leal", "Gallegos", "Hornos", "Ceres", "Viena", "Piscis", "Sierpes", "Amor de Dios", "Camino Llano");
+		// Genera una direcciï¿½n postal aleatoria eligiendo una calle y nï¿½mero de entre un conjunto de calles y nï¿½meros
+		List <String> listaDirecciones = Arrays.asList("Santa Joaquina de Vedruna", "Alfonso IX", "Ruta de la Plata", "Doctor Maraï¿½ï¿½n", "Rodï¿½guez Moï¿½ino", 
+				"Hornillos", "Berna", "Parï¿½s", "Pizarro", "Dalia", "Maluquer", "Leï¿½n Leal", "Gallegos", "Hornos", "Ceres", "Viena", "Piscis", "Sierpes", "Amor de Dios", "Camino Llano");
 		List <Integer> listaNumeros  = Arrays.asList(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20);
 		Random r = new Random();
 		int i = r.nextInt (0, 20);
@@ -126,7 +129,7 @@ public class Pedido implements Serializable {
 		// Recibimos una lista de pedidos
 		FileOutputStream fout;
 		try {
-			fout = new FileOutputStream (_fichero); // Pon aquí la ruta y nombre de tu fichero
+			fout = new FileOutputStream (_fichero); // Pon aquï¿½ la ruta y nombre de tu fichero
 			ObjectOutputStream o = new ObjectOutputStream (fout);
 			l.forEach(p-> {
 				try {
@@ -135,7 +138,7 @@ public class Pedido implements Serializable {
 					e.printStackTrace();
 				}
 			});	
-			o.writeObject (null); // Actúa de centinela para indicar que no hay más
+			o.writeObject (null); // Actï¿½a de centinela para indicar que no hay mï¿½s
 			o.close();
 			fout.close();
 		} catch (Exception e) {
@@ -161,4 +164,7 @@ public class Pedido implements Serializable {
 		return l;
 	}
 	
+	public static Observable<Pedido> pedidosDesdeFicheroObservable (){
+		return null;
+	}
 }

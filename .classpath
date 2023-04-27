@@ -6,5 +6,7 @@
 			<attribute name="module" value="true"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/ReactiveStreams"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/RxJava"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
