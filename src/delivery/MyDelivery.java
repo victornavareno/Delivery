@@ -49,7 +49,7 @@ public class MyDelivery {
 			try {
 				executor.awaitTermination(5, TimeUnit.SECONDS); // el executor espera 5 segundos
 			} catch (InterruptedException e) {
-				
+
 				e.printStackTrace();
 			}
 			executor.shutdown(); // cierro el executor
@@ -59,24 +59,26 @@ public class MyDelivery {
 		if (Config.lanzarPedidos == 2) {
 			lp.stream().parallel().forEach(a -> listaRestaurantes.get(a.getRestaurante()).tramitarPedido(a));
 		}
-		
+
 		// Lanzamos los pedidos con observable(3)
 		if(Config.lanzarPedidos == 3) {
-			
+
 		}
-		
+
 		//FILTRO LOS PEDIDOS DE PRECIO > 12 CON UN OBSERVABLE
+		Traza.traza(ColoresConsola.YELLOW_BOLD_BRIGHT, 4, "LOS PEDIDOS QUE SUPERAN EL IMPORTE DE 12 EUROS SON: ");
 		Observable<Pedido> obsPrecio = Observable.fromIterable(lp); // Create an observable from the list of pedidos
 		obsPrecio.filter(a -> a.getPrecioPedido() > 12)
-		    .subscribeOn(Schedulers.computation()) 
-		    .subscribe(b -> System.out.println(b.toString()));
-		
-		Observable<Pedido> obsSuma = Observable.fromIterable(lp);
-		obsPrecio.map(Pedido::getPrecioPedido) // Map each pedido to its precio
-		    .reduce((subtotal, precio) -> subtotal + precio) // Calculate the sum using reduce()
-		    .subscribeOn(Schedulers.io())
-		    .subscribe(sum -> System.out.println("Suma total: " + sum)); // Print the sum
+		.subscribeOn(Schedulers.computation()) 
+		.subscribe(b -> Traza.traza(ColoresConsola.YELLOW_BOLD_BRIGHT, 4,
+				b.getId()));
 
+		Observable<Pedido> obsSuma = Observable.fromIterable(lp);
+		obsSuma.map(Pedido::getPrecioPedido) // Creamos un mapa, donde cada elemento será un Pedido y su precio
+		.reduce((subtotal, precio) -> subtotal + precio) // Calculamos la suma usando reduce() en el mapa
+		.subscribeOn(Schedulers.computation())
+		.subscribe(sum -> Traza.traza(ColoresConsola.PURPLE_BOLD_BRIGHT, 4,
+				" Observable - La suma total de los importes de pedidos es:  " + sum));
 
 		// Callable para sacar el pedido mas caro
 		System.out.println();
@@ -103,7 +105,7 @@ public class MyDelivery {
 				.max();
 		double pedidoMasCaro = precioMasCaroOptional.orElse(0.0);
 		Traza.traza(ColoresConsola.PURPLE_BOLD_BRIGHT, 4,
-					"EL PEDIDO MAS CARO (Utilizando Streams) ES: " + pedidoMasCaro);
+				"EL PEDIDO MAS CARO (Utilizando Streams) ES: " + pedidoMasCaro);
 
 		// Streams para obtener una lista con todos los pedidos que tengan un precio
 		// menor de 7
@@ -134,9 +136,9 @@ public class MyDelivery {
 		System.out.println();
 		System.out.println("REALIZANDO AUDITORIAS DE LOS RESTAURANTES (Usando streams)... ");
 		listaRestaurantes.stream()
-				.parallel()
-				.forEachOrdered(
-						r -> System.out.println("Auditoria Restaurante " + r.getNombre() + " " + r.getBalance()));
+		.parallel()
+		.forEachOrdered(
+				r -> System.out.println("Auditoria Restaurante " + r.getNombre() + " " + r.getBalance()));
 
 		System.out.println("\nAuditoria Cadena: " + cadenaRestaurantes.getBank().audit(0, Config.numeroRestaurantes));
 
