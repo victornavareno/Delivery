@@ -79,6 +79,7 @@ public class Contenedor {
 		}
 	}
 
+	//asd
 	public void insertarLechuga() {
 		cuantos++; // inserto
 		Integer y = 1;
