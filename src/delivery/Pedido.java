@@ -87,7 +87,7 @@ public class Pedido implements Serializable {
 	}
 	
 	// GENERAR PEDIDOS
-	// Genera un n�mero determinado de pedidos (numPedidos) por el canal especificado (_canal)
+	// Genera un numero determinado de pedidos (numPedidos) por el canal especificado (_canal)
 	public static List<Pedido> generaPedidos (int _numPedidos, Canal _canal) {
 		List<Pedido> listaPedidos = new ArrayList<>(_numPedidos);
 		String id;
@@ -114,7 +114,7 @@ public class Pedido implements Serializable {
 
 	
 	public static String generarDireccion () {
-		// Genera una direcci�n postal aleatoria eligiendo una calle y n�mero de entre un conjunto de calles y n�meros
+		// Genera una direccion postal aleatoria eligiendo una calle y n�mero de entre un conjunto de calles y n�meros
 		List <String> listaDirecciones = Arrays.asList("Santa Joaquina de Vedruna", "Alfonso IX", "Ruta de la Plata", "Doctor Mara��n", "Rod�guez Mo�ino", 
 				"Hornillos", "Berna", "Par�s", "Pizarro", "Dalia", "Maluquer", "Le�n Leal", "Gallegos", "Hornos", "Ceres", "Viena", "Piscis", "Sierpes", "Amor de Dios", "Camino Llano");
 		List <Integer> listaNumeros  = Arrays.asList(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20);
