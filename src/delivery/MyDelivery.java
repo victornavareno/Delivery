@@ -55,7 +55,7 @@ public class MyDelivery {
 			executor.shutdown(); // cierro el executor
 		}
 
-		// Lanzamos los pedidos con streams (2)
+		// Lanzamos los pedidos con streams (2) as
 		if (Config.lanzarPedidos == 2) {
 			lp.stream().parallel().forEach(a -> listaRestaurantes.get(a.getRestaurante()).tramitarPedido(a));
 		}
