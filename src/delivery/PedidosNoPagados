@@ -1,0 +1,55 @@
+package delivery;
+
+import pcd.util.*;
+
+import java.io.*;
+import java.net.*;
+
+// Actua como el servidor, que escucha por un socket UDP en el puerto 10000 
+// Recibe: DatosPagoPedido
+// Analogia sockets UDP: Enviar una carta, no hay garantia de llegada y el orden es irrelevante
+public class PedidosNoPagados {
+
+	public static void main(String[] args) {
+		// Creo la ventana donde mostrare los pedidos rechazados (<12 leuros)
+		Ventana v = new Ventana("PEDIDOS NO TRAMITADOS", 360, 320);
+		v.addText("    #### SOCKETS UPD ####" );
+		v.addText("PEDIDOS QUE NO LLEGAN A 12 EUROS: ");
+
+		// Creo el socket y el paquete a recibir
+
+		DatagramSocket socket;
+		DatagramPacket paqueteRecibido; 
+		byte[] datosRecibidos = new byte[1024];
+		InetAddress direccionIp = null;
+		
+		try {
+			socket = new DatagramSocket(10000);
+			paqueteRecibido = new DatagramPacket(datosRecibidos, datosRecibidos.length);
+			
+			DatosPagoPedido pedidoNoPagado = null;
+			while(true) {
+				try {
+					socket.receive(paqueteRecibido);
+					ObjectInputStream ois = new ObjectInputStream(new ByteArrayInputStream (paqueteRecibido.getData()));
+					try {
+						pedidoNoPagado = (DatosPagoPedido) ois.readObject();
+					} catch (ClassNotFoundException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					if(pedidoNoPagado != null) {
+						v.addText(pedidoNoPagado.getId());
+					}
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+			
+		} catch (SocketException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+}

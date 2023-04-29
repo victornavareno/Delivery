@@ -46,10 +46,10 @@ public class Restaurante {
 	public void tramitarPedido(Pedido _p) {
 		/*
 		 * SI RECIBIMOS OK= Tramitamos Pedido
-		 * SI RECIBIMOS KO= No hacemos nada con ese pedido
+		 * SI RECIBIMOS KO= Enviamos DatosPagoPedido por socket UDP al servidor PedidosNoPagados
 		 */
 		DatosPagoPedido datosPago = new DatosPagoPedido(_p.getId(), _p.getPrecioPedido());
-		try (Socket socket = new Socket("localhost", 10000)) {
+		try (Socket socket = new Socket("localhost", 9999)) {
 			ObjectOutputStream output = new ObjectOutputStream(socket.getOutputStream());
 			BufferedReader input = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 			// enviamos el pedido
@@ -60,8 +60,25 @@ public class Restaurante {
 			if (response.equals("OK")) {
 				cocinarPedido(_p);
 			} else if (response.equals("KO")) {
-				// mando un objeto DatosPagoPedido con el pedido
-				// En PedidosNoPagados leemos del socket
+				DatagramSocket dSocket = new DatagramSocket(); // No necesitamos indicar puerto o ip aqui, eso ira incluido en el paquete
+
+				byte[] sendData  = new byte[1024];
+				InetAddress direccionIp = InetAddress.getLocalHost();
+				ByteArrayOutputStream baos;
+				ObjectOutputStream oos;
+				DatagramPacket sendPacket;
+				try {
+					baos = new ByteArrayOutputStream ();
+					oos = new ObjectOutputStream (baos);
+					oos.writeObject(datosPago);
+					sendData= new byte[baos.toByteArray().length];
+					sendData= baos.toByteArray();
+					sendPacket = new DatagramPacket(sendData, sendData.length, direccionIp, 10000); 
+					dSocket.send(sendPacket); 
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+				dSocket.close();
 			}
 		} catch (UnknownHostException e) {
 			// TODO Auto-generated catch block
