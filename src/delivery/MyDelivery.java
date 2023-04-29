@@ -3,7 +3,6 @@ package delivery;
 import java.util.*;
 import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.schedulers.Schedulers;
-
 import java.util.concurrent.*;
 import pcd.util.*;
 
@@ -66,12 +65,13 @@ public class MyDelivery {
 		}
 
 		//FILTRO LOS PEDIDOS DE PRECIO > 12 CON UN OBSERVABLE
-		Traza.traza(ColoresConsola.YELLOW_BOLD_BRIGHT, 4, "LOS PEDIDOS QUE SUPERAN EL IMPORTE DE 12 EUROS SON: ");
+		System.out.println();
+		Traza.traza(ColoresConsola.YELLOW_BOLD_BRIGHT, 4, " Observable - LOS PEDIDOS QUE SUPERAN EL IMPORTE DE 12 EUROS SON: ");
 		Observable<Pedido> obsPrecio = Observable.fromIterable(lp); // Create an observable from the list of pedidos
 		obsPrecio.filter(a -> a.getPrecioPedido() > 12)
 		.subscribeOn(Schedulers.computation()) 
-		.subscribe(b -> Traza.traza(ColoresConsola.YELLOW_BOLD_BRIGHT, 4,
-				b.getId()));
+		.subscribe(b -> Traza.traza(ColoresConsola.YELLOW_BOLD_BRIGHT, 4, 
+				"  " + b.getId()));
 
 		Observable<Pedido> obsSuma = Observable.fromIterable(lp);
 		obsSuma.map(Pedido::getPrecioPedido) // Creamos un mapa, donde cada elemento será un Pedido y su precio
@@ -89,7 +89,7 @@ public class MyDelivery {
 		try {
 			Double precioMasCaro = future.get();
 			Traza.traza(ColoresConsola.PURPLE_BOLD_BRIGHT, 4,
-					"EL PEDIDO MAS CARO (Utilizando Callable) ES: " + precioMasCaro);
+					" Callable - EL PEDIDO MAS CARO ES: " + precioMasCaro);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 
@@ -105,13 +105,12 @@ public class MyDelivery {
 				.max();
 		double pedidoMasCaro = precioMasCaroOptional.orElse(0.0);
 		Traza.traza(ColoresConsola.PURPLE_BOLD_BRIGHT, 4,
-				"EL PEDIDO MAS CARO (Utilizando Streams) ES: " + pedidoMasCaro);
+				" Streams - EL PEDIDO MAS CARO ES: " + pedidoMasCaro);
 
-		// Streams para obtener una lista con todos los pedidos que tengan un precio
-		// menor de 7
+		// Streams para obtener una lista con todos los pedidos que tengan un precio menor de 7
 		System.out.println();
-		Traza.traza(ColoresConsola.WHITE_BACKGROUND_BRIGHT, 4, "LA LISTA DE PEDIDOS QUE NO LLEGAN A 7 EUROS ES: ");
-		lp.stream().filter(a -> a.getPrecioPedido() < 7).forEach(a -> System.out.println(a.getId()));
+		Traza.traza(ColoresConsola.CYAN_BOLD_BRIGHT, 4, " LA LISTA DE PEDIDOS QUE NO LLEGAN A 7 EUROS ES: ");
+		lp.stream().filter(a -> a.getPrecioPedido() < 7).forEach(a -> System.out.println( "   " + a.getId()));
 
 		// Forkjoin para obtener lista con los pedidos por encima de 12€ -- REVISAR
 		List<Pedido> pedidosSuperan12Euros = new LinkedList<Pedido>(); // Aqui almacenaremos los pedidos caros
@@ -131,27 +130,28 @@ public class MyDelivery {
 		}
 
 		// AUDITORIAS
-		// Streams para lanzar auditorias de los restaurantes (Utilizo forEachOrdered
-		// para mostrarlos en orden original)
+		// Streams para lanzar auditorias de los restaurantes (Utilizo forEachOrdered para mostrarlos en orden original)
 		System.out.println();
-		System.out.println("REALIZANDO AUDITORIAS DE LOS RESTAURANTES (Usando streams)... ");
+		System.out.println(" Streams - REALIZANDO AUDITORIAS DE LOS RESTAURANTES... ");
 		listaRestaurantes.stream()
 		.parallel()
 		.forEachOrdered(
-				r -> System.out.println("Auditoria Restaurante " + r.getNombre() + " " + r.getBalance()));
+				r -> System.out.println("    Auditoria Restaurante " + r.getNombre() + " " + r.getBalance()));
 
-		System.out.println("\nAuditoria Cadena: " + cadenaRestaurantes.getBank().audit(0, Config.numeroRestaurantes));
+		System.out.println("\n  Auditoria Cadena: " + cadenaRestaurantes.getBank().audit(0, Config.numeroRestaurantes));
 
-		System.out.println("Tiempo total invertido en la tramitacion: " + (new Date().getTime() - initialTime));
+		System.out.println("   Tiempo total invertido en la tramitacion: " + (new Date().getTime() - initialTime));
+
+
 
 		// Imprimir si hay pedido en una calle en concreto, utilizando streams
 		String calle = "Berna, 11"; // introducir aqui el nombre de la calle a buscar
 		System.out.println();
-		Traza.traza(ColoresConsola.WHITE_BACKGROUND, 3, "Buscando un pedido realizado en la calle " + calle + "...");
+		Traza.traza(ColoresConsola.CYAN_BOLD_BRIGHT, 3, "Buscando un pedido realizado en la calle " + calle + "...");
 		if (lp.stream().anyMatch(a -> a.getDireccion().equals(calle))) {
-			Traza.traza(ColoresConsola.GREEN_BOLD_BRIGHT, 3, "Pedido encontrado");
+			Traza.traza(ColoresConsola.GREEN_BOLD_BRIGHT, 3, "   Pedido encontrado");
 		} else
-			Traza.traza(ColoresConsola.RED_BOLD_BRIGHT, 3, "Pedido no encontrado");
+			Traza.traza(ColoresConsola.RED_BOLD_BRIGHT, 3, "   Pedido no encontrado");
 		System.out.println();
 	}
 
