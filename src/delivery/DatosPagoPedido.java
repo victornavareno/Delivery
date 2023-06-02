@@ -17,4 +17,4 @@ public class DatosPagoPedido implements Serializable {
 		return importe;
 	}
 }
-
+ // funciona
