@@ -41,8 +41,8 @@ public class Producto implements Serializable {
 	}
 	
 	// GENERAR PRODUCTOS
-	// Puedes generar tus productos como quieras, pero aquí tienes una forma de hacerlo
-	// que te ayudará a ver si tu programa funciona bien o no.
+	// Puedes generar tus productos como quieras, pero aquï¿½ tienes una forma de hacerlo
+	// que te ayudara a ver si tu programa funciona bien o no.
 	
 	public static List<Producto> generaProductos (int numProductos) {
 		List <Producto> l = new ArrayList<>(numProductos);
@@ -55,7 +55,7 @@ public class Producto implements Serializable {
 			cantidad = 1+r.nextInt (Config.numeroProductos);
 			id = ""+r.nextInt (Config.maximoIdProducto);
 			// precio = Config.maximoPrecioProducto;              // con precio fijo. Mejor para trazas
-			precio = 1+r.nextDouble(Config.maximoPrecioProducto); // con precio aleatorio hasta el máximo del precio configurado
+			precio = 1+r.nextDouble(Config.maximoPrecioProducto); // con precio aleatorio hasta el mï¿½ximo del precio configurado
 			Producto p = new Producto (id, precio, cantidad);
 			l.add(p);
 		}

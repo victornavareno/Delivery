@@ -18,9 +18,9 @@ public class CadenaRestaurantes   {
 	
 	public void crearRestaurantes () {
 		for (int i=0;i<numRestaurantes;i++) {	
-			Restaurante r = new Restaurante (b.getAccount(i),			// su posición en el array de cuentas será su cuenta
+			Restaurante r = new Restaurante (b.getAccount(i),			// su posiciï¿½n en el array de cuentas serï¿½ su cuenta
 											""+i, 						// el nombre del Restaurante
-											Config.numeroMoteros);  	// número de moteros del restaurante. Por defecto todos los restaurantes con el mismo número de moteros
+											Config.numeroMoteros);  	// numero de moteros del restaurante. Por defecto todos los restaurantes con el mismo nï¿½mero de moteros
 											
 			lista.add(r);
 		}

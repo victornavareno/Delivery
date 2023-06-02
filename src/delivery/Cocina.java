@@ -28,7 +28,7 @@ public class Cocina {
 		// busco una hamburguesa de pollo entre los productos del pedido
 		for(Producto producto : p.getProductos()){
 			if(producto.getId().charAt(0) == '0'){
-				Traza.traza(ColoresConsola.GREEN_UNDERLINED,  6, "Contiene hamburguesa de pollo con lechuga");
+				Traza.traza(ColoresConsola.PURPLE_UNDERLINED,  6, "Este pedido tramitado ontiene hamburguesa de pollo con lechuga ");
 				contenedorPan.extraer();
 				contenedorPollo.extraer();
 				contenedorLechuga.extraerLechuga();

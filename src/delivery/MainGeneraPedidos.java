@@ -12,7 +12,7 @@ public class MainGeneraPedidos {
 		lp = Pedido.generaPedidos(10, Canal.Web);
 		lp.addAll(Pedido.generaPedidos(10, Canal.CC));
 		lp.addAll(Pedido.generaPedidos(10,Canal.Mobile));
-		Pedido.pedidosAFichero(lp, "C:/users/fsfig/pedidos4.bin");
+		Pedido.pedidosAFichero(lp, "C:/users/fsfig/pedidos4.bin"); // La ruta del fichero donde quieras escribir aqui
 		List <Pedido> lp2 = Pedido.pedidosDesdeFichero("C:/users/fsfig/pedidos4.bin");
 		for (Pedido p:lp2) {
 			p.print();

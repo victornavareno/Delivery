@@ -11,13 +11,12 @@ import java.net.*;
 public class PedidosNoPagados {
 
 	public static void main(String[] args) {
-		// Creo la ventana donde mostrare los pedidos rechazados (<12 leuros)
+		// Creo la ventana donde mostrare los pedidos rechazados (<12 leuros):
 		Ventana v = new Ventana("PEDIDOS NO TRAMITADOS", 360, 320);
 		v.addText("    #### SOCKETS UPD ####" );
 		v.addText("PEDIDOS QUE NO LLEGAN A 12 EUROS: ");
 
-		// Creo el socket y el paquete a recibir
-
+		// Creo el socket y el paquete a recibir:
 		DatagramSocket socket;
 		DatagramPacket paqueteRecibido; 
 		byte[] datosRecibidos = new byte[1024];
@@ -29,7 +28,7 @@ public class PedidosNoPagados {
 			DatosPagoPedido pedidoNoPagado = null;
 			while(true) {
 				try {
-					socket.receive(paqueteRecibido);
+					socket.receive(paqueteRecibido); // Recibimos los pedidos en forma de paquetes de bytes
 					ObjectInputStream ois = new ObjectInputStream(new ByteArrayInputStream (paqueteRecibido.getData()));
 					try {
 						pedidoNoPagado = (DatosPagoPedido) ois.readObject();

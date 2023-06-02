@@ -2,8 +2,7 @@ package delivery;
 import java.util.List;
 import java.util.Random;
 
-import io.reactivex.rxjava3.core.Observable;
-import io.reactivex.rxjava3.core.Observer;
+import io.reactivex.rxjava3.core.*;
 
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -19,7 +18,7 @@ import java.util.Arrays;
 public class Pedido implements Serializable {
 
 	private static final long serialVersionUID = 1L; 
-	
+
 	String idPedido;
 	String direccion;			// Direcci�n del cliente
 	int restaurante;			// Restaurante al que va el pedido
@@ -37,7 +36,7 @@ public class Pedido implements Serializable {
 		hora = _hora;
 		productos = _productos;
 	}
-	
+
 	public String getId() {
 		return idPedido;
 	}
@@ -45,47 +44,47 @@ public class Pedido implements Serializable {
 	public int getRestaurante () {
 		return restaurante;
 	}
-	
+
 	public String getDireccion () {
 		return direccion;
 	}
-	
+
 	public List<Producto> getProductos() {
 		return productos;
 	}
-	
+
 	public Canal getCanal() {
 		return canal;
 	}
-	
+
 	public LocalDate getFecha () {
 		return fecha;
 	}
-	
+
 	public LocalTime getHora () {
 		return hora;
 	}
-	
+
 	public double getPrecioPedido () {
 		double suma=0;
-		
+
 		List<Producto> productos = this.getProductos();
 		for (Producto prod:productos) {
 			suma+=prod.getPrecio();
 		}
 		return suma;
 	}
-	
+
 	public void print () {
 		System.out.print ("Pedido:    ");
 		System.out.println ("Id: "+idPedido+" "+direccion+" "+restaurante+" "+canal+"   "+getPrecioPedido());
 		//productos.stream().forEach (p->p.print()); // imprime cada producto
 	}	
-	
+
 	public String printConRetorno () {
 		return ("Id: "+idPedido+" "+direccion+" "+restaurante+" "+canal+"   "+getPrecioPedido());
 	}
-	
+
 	// GENERAR PEDIDOS
 	// Genera un numero determinado de pedidos (numPedidos) por el canal especificado (_canal)
 	public static List<Pedido> generaPedidos (int _numPedidos, Canal _canal) {
@@ -97,7 +96,7 @@ public class Pedido implements Serializable {
 		String direccion;
 		int restaurante;
 		Random r = new Random();
-		
+
 		for (int i=0;i<_numPedidos;i++) {
 			canal = _canal;
 			direccion = generarDireccion();
@@ -110,9 +109,9 @@ public class Pedido implements Serializable {
 		}
 		return listaPedidos;
 	}
-	
 
-	
+
+
 	public static String generarDireccion () {
 		// Genera una direccion postal aleatoria eligiendo una calle y n�mero de entre un conjunto de calles y n�meros
 		List <String> listaDirecciones = Arrays.asList("Santa Joaquina de Vedruna", "Alfonso IX", "Ruta de la Plata", "Doctor Mara��n", "Rod�guez Mo�ino", 
@@ -138,18 +137,18 @@ public class Pedido implements Serializable {
 					e.printStackTrace();
 				}
 			});	
-			o.writeObject (null); // Act�a de centinela para indicar que no hay m�s
+			o.writeObject (null); // Actua de centinela para indicar que no hay m�s
 			o.close();
 			fout.close();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
-	
+
 	public static List<Pedido> pedidosDesdeFichero (String _fichero) {
 		List<Pedido> l = new ArrayList<>(); // La lista de pedidos que vamos a retornar
 		Pedido pedido;
-		
+
 		try {
 			FileInputStream fin = new FileInputStream (_fichero); 
 			ObjectInputStream o = new ObjectInputStream (fin);
@@ -163,8 +162,25 @@ public class Pedido implements Serializable {
 		} catch (Exception e) {e.printStackTrace();}
 		return l;
 	}
-	
-	public static Observable<Pedido> pedidosDesdeFicheroObservable (){
-		return null;
+
+	// Crea un observable que emite pedidos leyendo desde un fichero
+	public static Observable<Pedido> pedidosDesdeFicheroObservable(String _fichero) {
+		return Observable.create(emitter -> {
+			try {
+				FileInputStream fin = new FileInputStream(_fichero);
+				ObjectInputStream o = new ObjectInputStream(fin);
+				Pedido pedido = (Pedido) o.readObject();
+				while (pedido != null) {
+					emitter.onNext(pedido);
+					pedido = (Pedido) o.readObject();
+				}
+				o.close();
+				fin.close();
+				emitter.onComplete();
+			} catch (Exception e) {
+				emitter.onError(e);
+			}
+		});
 	}
+
 }

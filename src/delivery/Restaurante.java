@@ -36,13 +36,15 @@ public class Restaurante {
 	public void cocinarPedido(Pedido _p) {
 		Traza.traza(ColoresConsola.BLUE_BOLD_BRIGHT, 5, "TRAMITANDO PEDIDO");
 		Pedido p = _p;
-		// Tramitar un pedido es:
+		
+		// TRAMITAR UN PEDIDO ES:
 		account.deposit(p.getPrecioPedido()); // anadir la cantidad abonada a la cuenta del banco
 		controlMoteros.moterosLibres(); // espero a que haya moteros libres
 		cocina.cocinar(p); // mandar el pedido a cocina
 		controlMoteros.enviarPedido(p); // una vez cocinado, mandarlo a los moteros para que uno lo coja
 	}
 
+	// CLIENTE QUE ESCUCHA POR UN SOCKET TCP EN EL PUERTO 9999
 	public void tramitarPedido(Pedido _p) {
 		/*
 		 * SI RECIBIMOS OK= Tramitamos Pedido
@@ -62,7 +64,7 @@ public class Restaurante {
 			} else if (response.equals("KO")) {
 				DatagramSocket dSocket = new DatagramSocket(); // No necesitamos indicar puerto o ip aqui, eso ira incluido en el paquete
 
-				byte[] sendData  = new byte[1024];
+				byte[] sendData  = new byte[1024]; // TRAMA DE 1024 BYTES
 				InetAddress direccionIp = InetAddress.getLocalHost();
 				ByteArrayOutputStream baos;
 				ObjectOutputStream oos;
@@ -74,7 +76,7 @@ public class Restaurante {
 					sendData= new byte[baos.toByteArray().length];
 					sendData= baos.toByteArray();
 					sendPacket = new DatagramPacket(sendData, sendData.length, direccionIp, 10000); 
-					dSocket.send(sendPacket); 
+					dSocket.send(sendPacket); // ENVIAMOS EL PAQUETE, QUE SERA RECIBIDO POR EL SOCKET UDP
 				} catch (IOException e) {
 					e.printStackTrace();
 				}

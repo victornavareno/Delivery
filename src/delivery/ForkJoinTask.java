@@ -1,64 +1,54 @@
 package delivery;
-
 import java.util.*;
 import java.util.concurrent.*;
-
 import pcd.util.ColoresConsola;
 import pcd.util.Traza;
 
-public class ForkJoinTask extends RecursiveAction{
+// Utilizar RecursiveTask<Objeto> si queremos devolver un objeto o lista en esta tarea 
+// En este caso devolvemos una Lista con los pedidos que superen un precio de 12 euros sumando sus productos
+public class ForkJoinTask extends RecursiveTask<List<Pedido>>{
+	private static final long serialVersionUID = 1L;
 
-	private List<Producto> productos;
-	
-	private int first;
-	private int last;
-	private double totalPrecios;
-	private boolean superaPrecio = false;
-	
-	public ForkJoinTask(List<Producto> productos, int first, int last) {
-		this.productos = productos;
-		this.first = first;
-		this.last = last;
-		this.totalPrecios = 0.0;
-		
+	/*En esta lista se almacenaran los pedidos que superen el precio umbral (en este caso 12 euros)*/
+	private List<Pedido> pedidos;
+
+	public ForkJoinTask(List<Pedido> pedidos) {
+		this.pedidos = pedidos;
 	}
-	
+
 	@Override
-	protected void compute() {
-		//caso trivial= quedan menos de 10 productos en la lista de pedidos
-		if((last - first) < 10) {
-            if(totalPrecios >= 12) {
-				this.superaPrecio = true;
-			}
-			totalPrecios =+ sumarPrecios();
-			Traza.traza(ColoresConsola.RED_BOLD, 6 , "Tarea Forkjoin: sumando precios. Precio actual= " + totalPrecios);
-			//DUDA FERNANDO: COMO INDICAR QUE EL PEDIDO ACTUAL HA SUPERADO EL PRECIO COTA 12 EUROS
+	protected List<Pedido> compute() {
+		List<Pedido> pedidosCaros = new ArrayList<>();
 
+		if (pedidos.size() <= 10) { // CASO TRIVIAL: quedan 10 o menos pedidos en la lista de pedidos
+			for (Pedido pedido : pedidos) {
+				if (calcularPrecioTotal(pedido) > 12) {
+					Traza.traza(ColoresConsola.RED_UNDERLINED, 6, "AÑADIENDO PEDIDO FORKJOIN: " + pedido.getId());
+					pedidosCaros.add(pedido);
+				}
+			}
+		} else {
+			// divide y venceras recursivo: DIVIDIMOS EL PROBLEMA EN DOS Y LO UNIMOS MÁS ADELANTE CON UN JOIN
+			int mitad = pedidos.size() / 2;
+			ForkJoinTask izquierda = new ForkJoinTask(pedidos.subList(0, mitad));
+			ForkJoinTask derecha = new ForkJoinTask(pedidos.subList(mitad, pedidos.size()));
+
+			invokeAll(izquierda, derecha);
+			
+			// AQUI ESTA EL JOIN 
+			pedidosCaros.addAll(izquierda.join());
+			pedidosCaros.addAll(derecha.join());
 		}
-		else {
-			//llamada divide y venceras (RECURSIVO):
-			int middle = (last + first) / 2;
-			ForkJoinTask t1 = new ForkJoinTask(productos, first, middle+1);
-			ForkJoinTask t2 = new ForkJoinTask(productos, middle+1, last);
-			invokeAll(t1,t2);
-		}
+
+		return pedidosCaros;
 	}
-	
-	private double sumarPrecios() {
+
+	private double calcularPrecioTotal(Pedido pedido) {
 		double precioTotal = 0.0;
-		for(int i = first; i<last ; i++) {
-			Producto producto = productos.get(i);
+		for(Producto producto : pedido.getProductos()) {
 			precioTotal += producto.getPrecio();
 		}
 		return precioTotal;
 	}
 	
-	public double getPrecio() {
-		Traza.traza(ColoresConsola.RED_BOLD, 6 , "el precio actual es: " + totalPrecios);
-		return this.totalPrecios;
-	}
-
-	public boolean superaPrecio() {
-		return superaPrecio;
-	}
 }
