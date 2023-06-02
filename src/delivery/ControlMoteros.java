@@ -13,7 +13,9 @@ public class ControlMoteros {
 	static int posicionVentana = 10;
 
 	private Motero motero;
-	private List<Pedido> listaPedidos;
+	private List<Pedido> listaPedidos; // Almacena los pedidos a enviar por nuestros moteros disponibles
+	
+	// WAITSETS, DONDE LOS HILOS REALIZAN ESPERA ACTIVA HASTA PODER REALIZAR SU TAREA
 	private Object o1; // waitset moteros
 	private Object o2; // waitset pedidos
 
@@ -33,13 +35,14 @@ public class ControlMoteros {
 		o1 = new Object();
 		o2 = new Object();
 
-		// Lanzando los moteros del restaurante
+		// Lanzando los moteros del restaurante (Para cada motero le paso un id, su control moteros y el cyclicBarrier por si lo usamos)
 		for (int i = 0; i < Config.numeroMoteros; i++) {
 			motero = new Motero(i, this, cyclicBarrier);
 			motero.start();
 		}
 	}
 
+	// ANADE UN PEDIDO A MI LISTA, LO QUE QUIERE DECIR QUE ESTA LISTO PARA ENVIARSE
 	public synchronized void enviarPedido(Pedido p) {
 		try {
 			Thread.sleep(500); // Simulamos que tarda 0,5 segundos en repartir
@@ -53,6 +56,7 @@ public class ControlMoteros {
 		}
 	}
 
+	// METODO DE ESPERA HASTA QUE EXISTA ALGUN MOTERO DISPONIBLE
 	public void moterosLibres() {
 		synchronized (o1) {
 			while (numeroMoteros == 0) {
@@ -67,6 +71,7 @@ public class ControlMoteros {
 
 	}
 
+	// EN CUANTO HAY UN PEDIDO LISTO, LO COJO DE LA LISTA
 	public Pedido getPedido() {
 		synchronized (o2) {
 			while (listaPedidos.isEmpty()) {
@@ -80,11 +85,13 @@ public class ControlMoteros {
 		}
 	}
 
+	// DECREMENTA EL NUMERO DE MOTEROS DISPONIBLES
 	public synchronized void repartirPedido(int idMotero, Pedido pedido) {
-		v.addText("REPARTIENDO PEDIDO: " + pedido.getId() + " EL MOTERO: " + idMotero);
+		v.addText("REPARTIENDO PEDIDO: " + pedido.getId());  //+ " MOTERO ENCARGADO: " + idMotero); 
 		numeroMoteros--;
 	}
 
+	// INCREMENTA EL NUMERO DE MOTEROS DISPONIBLES
 	public void regresarMotero() {
 		synchronized (o1) {
 			numeroMoteros++;
